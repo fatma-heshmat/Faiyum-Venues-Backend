@@ -13,6 +13,7 @@ app.use(cors()); // كدة أي حد يقدر يكلم السيرفر (مناس�
 
 // 3. Middleware للبيانات
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // 4. الصور (Static Files)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

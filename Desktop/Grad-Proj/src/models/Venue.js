@@ -5,7 +5,6 @@ const venueSchema = new mongoose.Schema({
   description: String,
   price: Number,
   image: String,
-  category: String,
   location: String
 }, { timestamps: true });
 
