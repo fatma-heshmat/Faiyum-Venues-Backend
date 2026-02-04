@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require('mongoose');
-const cors = require('cors'); // استدعاء المكتبة
+//const cors = require('cors'); // استدعاء المكتبة
 const path = require('path'); // ناديت عليها بس، من غير npm install
 const connectDB = require("./src/config/db");
 connectDB();
@@ -9,7 +9,19 @@ connectDB();
 const app = express(); // هنا بنشغل الإكسبريس
 // 2. تعديل الـ CORS عشان يبقى جلوبال فعلاً
 // لو سبتيه localhost:5173 بس، زميلك مش هيعرف يفتح لما يرفع الفرونت أونلاين
-app.use(cors()); // كدة أي حد يقدر يكلم السيرفر (مناسب للمرحلة دي)
+// 2. إعداد الـ CORS للهوست بتاع زميلك ولأي حد أونلاين
+//const allowedOrigins = ['http://localhost:5173']; // ضيفي هنا لينك الفرونت لو رفعه
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*'); // بيسمح لأي موقع في العالم
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  
+  // عشان لو الفرونت بعت طلب اختبار (Preflight) يوافق عليه فوراً
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
 
 // 3. Middleware للبيانات
 app.use(express.json());
