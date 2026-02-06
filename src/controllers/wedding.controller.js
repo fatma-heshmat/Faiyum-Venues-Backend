@@ -13,8 +13,13 @@ exports.createWedding = asyncHandler(async (req, res) => {
     const baseUrl = `${req.protocol}://${req.get('host')}`;
     finalImage = `${baseUrl}/uploads/${req.file.filename}`;
   }
+  if (!name || !price || !description || !location || !finalImage) {
+    res.status(400);
+    throw new Error("برجاء إدخال كافة البيانات: الاسم، السعر، الوصف، والموقع");
+  }
   const wedding = await Wedding.create({
     name, description, price, location , image: finalImage
   });
   res.status(201).json(wedding);
+
 });
