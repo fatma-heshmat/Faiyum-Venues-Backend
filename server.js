@@ -14,10 +14,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/venues', require('./src/routes/venue.routes'));
 app.use('/api/outdoors', require('./src/routes/outdoor.routes'));
 app.use('/api/weddings', require('./src/routes/wedding.routes'));
+app.use('/api/birthdays', require('./src/routes/birthday.routes'));
 
 app.listen(process.env.PORT || 5000  , () => {
   console.log("Server running 🚀");
 });
+
 
 
 
