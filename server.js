@@ -18,11 +18,12 @@ app.use('/api/birthdays', require('./src/routes/birthday.routes'));
 app.use('/api/graduations', require('./src/routes/graduation.routes'));
 app.use('/api/special-events', require('./src/routes/specialEvent.routes'));
 app.use('/api/planners', require('./src/routes/planner.routes'));
-app.use('/api/auth', require('./src/routes/SignUp.routes'));
+app.use('/api/signup', require('./src/routes/SignUp.routes'));
 
 app.listen(process.env.PORT || 5000  , () => {
   console.log("Server running 🚀");
 });
+
 
 
 
