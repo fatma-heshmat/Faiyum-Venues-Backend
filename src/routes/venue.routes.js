@@ -1,6 +1,6 @@
 const router = require("express").Router();
 // سيبنا الدالة اللي بتعرض بس ومسحنا createVenue عشان ميعملش Error
-const { getVenues , createVenue} = require("../controllers/venue.controller");
+const { getVenues , createVenue, getVenueDetails} = require("../controllers/venue.controller");
 const upload = require('../middleware/upload'); // لازم تنادي على الميدل وير بتاع الصور
 
 // 1. رابط العرض (لليوزر والبوست مان)
@@ -11,3 +11,4 @@ router.post("/", upload.single('image'), createVenue);
 router.get("/:id", getVenueDetails);
 
 module.exports = router;
+
