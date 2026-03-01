@@ -16,14 +16,13 @@ exports.getVenues = asyncHandler(async (req, res) => {
 // دالة إضافة قاعة جديدة
 exports.createVenue = asyncHandler(async (req, res) => {
   // 1. استلام البيانات من Body (بناءً على طلبك شلنا الكاتيجوري)
-  const { name, description, price, location } = req.body;
+ const { name, description, price, location, capacity, rating } = req.body;
 
   // 2. التأكد من إدخال البيانات الأساسية
-  if (!name || !price || !description || !location) {
+  if (!name || !price || !description || !location || !capacity) {
     res.status(400);
-    throw new Error("Please add all required fields (name, price, description, location)");
+    throw new Error("Please add all required fields (name, price, description, location, capacity)");
   }
-
   // 3. التأكد من رفع الصورة
   if (!req.file) {
     res.status(400);
@@ -60,5 +59,6 @@ exports.getVenueDetails = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
 
 
