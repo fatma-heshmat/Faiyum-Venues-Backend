@@ -7,5 +7,7 @@ const upload = require('../middleware/upload'); // لازم تنادي على ا
 router.get("/", getVenues);
 // ضيفي السطر ده تاني مؤقتاً
 router.post("/", upload.single('image'), createVenue);
+// النقطتين :id دي معناها إن الجزء ده متغير (بياخد أي ID قاعة)
+router.get("/:id", getVenueDetails);
 
 module.exports = router;
