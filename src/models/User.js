@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["client", "planner", "admin"],
+      enum: ["user", "planner", "admin"],
       default: "client",
     },
   },
@@ -28,4 +28,5 @@ const userSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("User", userSchema);
+
 
