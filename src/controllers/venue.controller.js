@@ -42,5 +42,23 @@ exports.createVenue = asyncHandler(async (req, res) => {
   // 5. رد السيرفر بنجاح العملية
   res.status(201).json(venue);
 });
+exports.getVenueDetails = async (req, res) => {
+  try {
+    // بناخد الـ ID من الرابط (URL)
+    const venueId = req.params.id; 
+
+    // بندور في الداتابيز بالـ ID ده
+    const venue = await Venue.findById(venueId);
+
+    if (!venue) {
+      return res.status(404).json({ message: "Venue not found!" });
+    }
+
+    // بنبعت بيانات القاعة اللي لقيناها
+    res.status(200).json(venue);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
 
 
