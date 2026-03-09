@@ -14,7 +14,7 @@ exports.getBirthdayDetails = asyncHandler(async (req, res) => {
 });
 
 exports.createBirthday = asyncHandler(async (req, res) => {
-  const { name, description, price, location, image, capacity, rating } = req.body;
+  const { name, description, price, location, image , capacity, rating} = req.body;
   
   let finalImage = image;
   if (req.file) {
@@ -22,7 +22,7 @@ exports.createBirthday = asyncHandler(async (req, res) => {
     finalImage = `${baseUrl}/uploads/${req.file.filename}`;
   }
 
-  // التعديل هنا بس: شيلنا capacity و rating من الـ if عشان ميطلعش Error لو قيمتهم 0
+  // ملحوظة: شلنا الـ capacity والـ rating من الـ if عشان لو قيمتهم 0 السيرفر ميوقفش
   if (!name || !price || !description || !location || !finalImage) {
     res.status(400);
     throw new Error("Please Enter All Fields");
@@ -37,5 +37,7 @@ exports.createBirthday = asyncHandler(async (req, res) => {
     capacity: capacity, 
     rating: rating 
   });
+
   res.status(201).json(birthday);
-}); // <-- القوس ده كان ناقص وهو اللي عامل المشكلة
+});
+
