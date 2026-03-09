@@ -39,7 +39,7 @@ exports.createBirthday = asyncHandler(async (req, res) => {
     image: finalImage,
     capacity: capacity, 
     rating: rating 
-      
+ });      
   res.status(201).json(birthday);
 });
 
