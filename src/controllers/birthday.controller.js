@@ -35,7 +35,7 @@ exports.createBirthday = asyncHandler(async (req, res) => {
     image: finalImage,
     capacity: capacity, 
     rating: rating 
-  })
+  });
 
   res.status(201).json(birthday); // السطر ده لازم يكون جوه الـ exports.createBirthday
 }); // دي قفلة الـ asyncHandler والـ exports
