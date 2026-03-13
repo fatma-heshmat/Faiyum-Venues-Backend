@@ -6,6 +6,18 @@ exports.getPlanners = asyncHandler(async (req, res) => {
   res.status(200).json(planners);
 });
 
+// 2. جلب تفاصيل منظم واحد عن طريق الـ ID (الجزئية اللي زودناها)
+exports.getPlannerDetails = asyncHandler(async (req, res) => {
+  const planner = await Planner.findById(req.params.id);
+
+  if (!planner) {
+    res.status(404);
+    throw new Error("المنظم غير موجود");
+  }
+
+  res.status(200).json(planner);
+});
+
 // دالة إضافة تقييم جديد وحساب المتوسط (اللوجيك اللي طلبتيه)
 exports.addPlannerReview = asyncHandler(async (req, res) => {
   const { plannerId, customerName, comment, userRating } = req.body;
