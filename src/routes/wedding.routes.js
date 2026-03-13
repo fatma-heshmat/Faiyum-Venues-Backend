@@ -12,6 +12,19 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET: عشان يسحب قاعة واحدة بس عن طريق الـ ID
+router.get('/:id', async (req, res) => {
+  try {
+    const venue = await Wedding.findById(req.params.id);
+    if (!venue) {
+      return res.status(404).json({ message: "القاعة غير موجودة" });
+    }
+    res.json(venue);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // POST: عشان إنتي ترفعي القاعات من Postman
 router.post('/', async (req, res) => {
  try {
