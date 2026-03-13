@@ -9,7 +9,10 @@ const upload = multer({ dest: 'uploads/' });
 // 1. مسار يجيب كل المنظمين
 router.get("/", getPlanners);
 
-// 2. مسار يضيف منظم جديد (بيدعم رفع صورة واحدة باسم 'image')
-router.post("/", upload.single('image'), createPlanner);
+router.post("/", upload.fields([
+  { name: 'image', maxCount: 1 },           // حقل الصورة الشخصية
+  { name: 'projectImages', maxCount: 3 }    // حقل صور التنفيذات
+]), createPlanner);
+
 
 module.exports = router;
