@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { getPlanners, createPlanner } = require("../controllers/planner.controller");
+const { getPlanners, createPlanner , getPlannerDetails} = require("../controllers/planner.controller");
 const multer = require('multer');
 
 // إعداد المخزن المؤقت للصور (لو حبيتي ترفعي ملفات)
@@ -18,4 +18,5 @@ router.post("/", upload.fields([
 router.post("/add-review", addPlannerReview);
 
 module.exports = router;
+
 
