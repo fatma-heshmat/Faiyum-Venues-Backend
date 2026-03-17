@@ -1,4 +1,4 @@
-const EventOptions = require("../models/eventOptions.model");
+const EventOptions = require("../models/eventOptions");
 
 const createEventOptions = async (req, res) => {
 
