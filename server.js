@@ -19,6 +19,7 @@ app.use('/api/graduations', require('./src/routes/graduation.routes'));
 app.use('/api/special-events', require('./src/routes/specialEvent.routes'));
 app.use('/api/planners', require('./src/routes/planner.routes'));
 app.use('/api/auth', require('./src/routes/auth.routes'));
+app.use('/api', require('./src/routes/eventOptions.routes'));
 
 app.listen(process.env.PORT || 5000  , () => {
   console.log("Server running 🚀");
