@@ -8,8 +8,12 @@ exports.getPlanners = asyncHandler(async (req, res) => {
 
 // 2. جلب تفاصيل منظم واحد عن طريق الـ ID (الجزئية اللي زودناها)
 exports.getPlannerDetails = asyncHandler(async (req, res) => {
+ if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400);
+    throw new Error("Invalid Planner ID format");
+  }
+  
   const planner = await Planner.findById(req.params.id);
-
   if (!planner) {
     res.status(404);
     throw new Error("المنظم غير موجود");
