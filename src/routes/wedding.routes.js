@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const Wedding = require('../models/Wedding');
-const upload = require('../middleware/upload');
 
 // GET: عشان زميلك يسحب كل القاعات
 router.get('/', async (req, res) => {
@@ -27,7 +26,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST: عشان إنتي ترفعي القاعات من Postman
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', async (req, res) => {
  try {
     const wedding = new Wedding(req.body);
     await wedding.save();
