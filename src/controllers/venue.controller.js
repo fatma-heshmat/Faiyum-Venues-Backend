@@ -15,32 +15,30 @@ exports.getVenues = asyncHandler(async (req, res) => {
 });
 // دالة إضافة قاعة جديدة
 exports.createVenue = asyncHandler(async (req, res) => {
-  // 1. استلام البيانات من Body (بناءً على طلبك شلنا الكاتيجوري)
- const { name, description, price, location, capacity, rating } = req.body;
+  // 1. استلام البيانات من Body 
+  const { name, description, price, location, capacity, rating , image} = req.body;
+// لو مفيش ملف مرفع، هنستخدم اللينك اللي جاي في خانة image
+  let finalImage = image; 
 
-  // 2. التأكد من إدخال البيانات الأساسية
-  if (!name || !price || !description || !location || !capacity) {
-    res.status(400);
-    throw new Error("Please add all required fields (name, price, description, location, capacity)");
-  }
-  // 3. التأكد من رفع الصورة
-  if (!req.file) {
-    res.status(400);
-    throw new Error("Please upload an image");
+  if (req.file) {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    finalImage = `${baseUrl}/uploads/${req.file.filename}`;
   }
 
-  // 4. حفظ البيانات في الداتابيز
+  // التأكد من إن الحاجات الأساسية موجودة (شيلنا شرط req.file الإجباري)
+  if (!name || !price || !description || !location || !capacity || !finalImage) {
+    res.status(400);
+    throw new Error("Please add all required fields and an image link/file");
+  }
+
   const venue = await Venue.create({
-    name,
-    description,
-    price,
-    location,
-    image: `/uploads/${req.file.filename}`, // مسار الصورة اللي هيتخزن
+    name, description, price, location, capacity, rating,
+    image: finalImage, 
   });
-
   // 5. رد السيرفر بنجاح العملية
   res.status(201).json(venue);
 });
+
 exports.getVenueDetails = async (req, res) => {
   try {
     // بناخد الـ ID من الرابط (URL)
