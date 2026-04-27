@@ -1,14 +1,28 @@
 const router = require("express").Router();
-// سيبنا الدالة اللي بتعرض بس ومسحنا createVenue عشان ميعملش Error
-const { getVenues , createVenue, getVenueDetails} = require("../controllers/venue.controller");
-const upload = require('../middleware/upload'); // لازم تنادي على الميدل وير بتاع الصور
+const { getVenues, createVenue, getVenueDetails } = require("../controllers/venue.controller");
+const multer = require('multer');
 
-// 1. رابط العرض (لليوزر والبوست مان)
+// أبسط إعداد للرفع (على السيرفر مباشرة)
+//const upload = multer({ dest: 'uploads/' });
+
+const path = require('path');
+
+// إعداد متطور للمولتير عشان يحفظ الصور بامتدادها الصح
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    // بيحفظ الصورة باسم فريد مع الامتداد الأصلي بتاعها
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
+
 router.get("/", getVenues);
-// ضيفي السطر ده تاني مؤقتاً
 router.post("/", upload.single('image'), createVenue);
 // النقطتين :id دي معناها إن الجزء ده متغير (بياخد أي ID قاعة)
 router.get("/:id", getVenueDetails);
 
 module.exports = router;
-
