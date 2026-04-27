@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Wedding = require('../models/wedding');
+const Wedding = require('../models/Wedding');
 const upload = require('../middleware/upload');
 
 // GET: عشان زميلك يسحب كل القاعات
