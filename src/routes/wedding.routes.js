@@ -25,30 +25,38 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST: عشان ترفعي القاعات من Postman وتتحل مشكلة الـ Validation
+// POST: حل نهائي لمشكلة "Cannot destructure property name"
 router.post('/', async (req, res) => {
- try {
-    // 1. استلام البيانات من الجسم (req.body)
-    const { name, description, price, location, image, capacity, rating } = req.body;
+  try {
+    // 1. سحب البيانات مباشرة من req.body
+    const name = req.body.name;
+    const description = req.body.description;
+    const price = req.body.price;
+    const location = req.body.location;
+    const image = req.body.image;
+    const capacity = req.body.capacity;
+    const rating = req.body.rating;
 
-    // 2. تجميع البيانات في كائن واحد (عشان نضمن إنها واصلة للموديل صح)
-    const weddingData = {
+    // 2. التحقق من وجود الحقول الأساسية
+    if (!name || !price || !description) {
+      return res.status(400).json({ message: "Missing required fields: name, price, or description" });
+    }
+
+    // 3. إنشاء وحفظ القاعة
+    const wedding = new Wedding({
       name,
       description,
       price,
       location,
-      image, // هنا السيرفر هياخد اللينك أو النص اللي باعتاده في خانة image
+      image: image || "default_link_here", // لو مفيش صورة هياخد لينك افتراضي
       capacity: capacity || 0,
       rating: rating || 0
-    };
+    });
 
-    const wedding = new Wedding(weddingData);
     await wedding.save();
     res.status(201).json(wedding);
   } catch (err) {
-    // لو فيه حاجة ناقصة هيطلع لك رسالة واضحة هنا
     res.status(400).json({ message: err.message });
   }
 });
-
 module.exports = router;
