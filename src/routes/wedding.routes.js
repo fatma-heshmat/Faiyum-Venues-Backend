@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Wedding = require('../models/Wedding');
+const upload = require('../middleware/upload');
 
 // GET: عشان زميلك يسحب كل القاعات
 router.get('/', async (req, res) => {
@@ -25,30 +26,25 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST: حل نهائي لمشكلة "Cannot destructure property name"
-router.post('/', async (req, res) => {
+// POST: التعديل عشان يقبل form-data وصور
+router.post('/', upload.single('image'), async (req, res) => {
   try {
-    // 1. سحب البيانات مباشرة من req.body
-    const name = req.body.name;
-    const description = req.body.description;
-    const price = req.body.price;
-    const location = req.body.location;
-    const image = req.body.image;
-    const capacity = req.body.capacity;
-    const rating = req.body.rating;
-
-    // 2. التحقق من وجود الحقول الأساسية
-    if (!name || !price || !description) {
-      return res.status(400).json({ message: "Missing required fields: name, price, or description" });
+    // لما بنستخدم multer، البيانات بتنزل في req.body والصورة في req.file
+    const { name, description, price, location, capacity, rating } = req.body;
+    
+    let finalImage = req.body.image; // لو باعتة لينكات نصية
+    if (req.file) {
+      // لو رافعة ملف صورة حقيقي من الكمبيوتر
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      finalImage = `${baseUrl}/uploads/${req.file.filename}`;
     }
 
-    // 3. إنشاء وحفظ القاعة
     const wedding = new Wedding({
       name,
       description,
       price,
       location,
-      image: image || "default_link_here", // لو مفيش صورة هياخد لينك افتراضي
+      image: finalImage,
       capacity: capacity || 0,
       rating: rating || 0
     });
