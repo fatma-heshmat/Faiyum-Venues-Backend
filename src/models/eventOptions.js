@@ -8,7 +8,7 @@ const eventOptionsSchema = new mongoose.Schema({
 
   menuType: {
     type: String,
-    enum: ["set menu", "open buffet"]
+    enum: ["set menu", "open buffet" ]
   },
 
   drinks: {
@@ -28,7 +28,7 @@ const eventOptionsSchema = new mongoose.Schema({
    
   cakeType: {
     type: String,
-    enum: ["wedding cake", "birthday cake", "graduation cake"]
+    enum: ["wedding cake", "birthday cake", "graduation cake" , "special cake"]
   },
   // الحقل الجديد مع الفالديشن بالإنجليزي
   eventDate: {
