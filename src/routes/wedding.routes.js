@@ -25,25 +25,28 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST: عشان إنتي ترفعي القاعات من Postman
+// POST: عشان ترفعي القاعات من Postman وتتحل مشكلة الـ Validation
 router.post('/', async (req, res) => {
  try {
-    const wedding = new Wedding(req.body);
-    await wedding.save();
-    res.status(201).json(wedding);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+    // 1. استلام البيانات من الجسم (req.body)
+    const { name, description, price, location, image, capacity, rating } = req.body;
 
-module.exports = router;
-// POST: عشان إنتي ترفعي القاعات من Postman
-router.post('/', async (req, res) => {
- try {
-    const wedding = new Wedding(req.body);
+    // 2. تجميع البيانات في كائن واحد (عشان نضمن إنها واصلة للموديل صح)
+    const weddingData = {
+      name,
+      description,
+      price,
+      location,
+      image, // هنا السيرفر هياخد اللينك أو النص اللي باعتاده في خانة image
+      capacity: capacity || 0,
+      rating: rating || 0
+    };
+
+    const wedding = new Wedding(weddingData);
     await wedding.save();
     res.status(201).json(wedding);
   } catch (err) {
+    // لو فيه حاجة ناقصة هيطلع لك رسالة واضحة هنا
     res.status(400).json({ message: err.message });
   }
 });
