@@ -24,7 +24,7 @@ exports.createGraduation = asyncHandler(async (req, res) => {
     finalImage = `${baseUrl}/uploads/${req.file.filename}`;
   }
   
-  if (!name || !price || !description || !location || !finalImage , capacity, rating) {
+  if (!name || !price || !description || !location || !finalImage || !capacity || !rating) {
     res.status(400);
     throw new Error("Please Enter All Fields");
   }
