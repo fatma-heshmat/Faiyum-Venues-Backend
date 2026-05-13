@@ -2,13 +2,12 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    // حطينا الرابط مباشرة هنا عشان نضمن إنه يقرأ VenuesDB ويجيب الـ 12 قاعة
-    const conn = await mongoose.connect("mongodb+srv://fatmaheshmat9:Fatma2026@cluster0.b2dfw1p.mongodb.net/VenuesDB?retryWrites=true&w=majority&appName=Cluster0");
+    // هيرجع يقرأ من المتغير اللي هنحطه في لوحة تحكم Railway
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
     
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-    console.log(`📂 Database Name: ${conn.connection.name}`); // ده هيأكد لنا إننا دخلنا VenuesDB
+    console.log(`✅ MongoDB Connected to: ${conn.connection.name}`);
   } catch (error) {
-    console.error(`❌ Connection Error: ${error.message}`);
+    console.error(`❌ DB Connection Error: ${error.message}`);
     process.exit(1);
   }
 };
