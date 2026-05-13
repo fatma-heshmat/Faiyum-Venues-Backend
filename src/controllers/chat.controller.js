@@ -1,42 +1,58 @@
 const axios = require("axios");
-const Venue = require("../models/Venue");
+const mongoose = require("mongoose");
 
 exports.handleChat = async (req, res) => {
     try {
         const { message } = req.body;
         const apiKey = process.env.GEMINI_API_KEY;
 
-        // 1. سحب بيانات القاعات من المونجو
-        const venues = await Venue.find();
-        
-        // --- سطر كشف المشكلة (بص عليه في الترمينال عندك) ---
-        console.log("--- DEBUG: عدد القاعات اللي لقيناها في الداتا بيز =", venues.length);
-        // --------------------------------------------------
+        // 1. تحديد الجداول اللي هنقرأ منها (كل حاجة ما عدا users)
+        const collectionsToFetch = [
+            'venues', 'birthdays', 'eventoptions', 'graduations', 
+            'outdoors', 'planners', 'specialevents', 'weddings'
+        ];
 
-        const contextData = JSON.stringify(venues);
+        // 2. سحب الداتا من كل الجداول دي "ديناميكياً"
+        const db = mongoose.connection.db;
+        const allDataResults = await Promise.all(
+            collectionsToFetch.map(async (colName) => {
+                const data = await db.collection(colName).find({}).toArray();
+                return { [colName]: data };
+            })
+        );
 
-        // 2. هنسأل جوجل عن الموديلات المتاحة (عشان نتفادى الـ 404)
+        // تجميع كل الجداول في كائن واحد
+        const combinedData = Object.assign({}, ...allDataResults);
+        const contextData = JSON.stringify(combinedData);
+
+        // --- سطر كشف المشكلة للـ Debug ---
+        console.log("--- DEBUG: تم سحب الداتا من كل الجداول بنجاح ---");
+
+        // 3. تحديد الموديل (زي كودك القديم)
         const modelsUrl = `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`;
         const modelsResponse = await axios.get(modelsUrl);
         const availableModels = modelsResponse.data.models;
         const bestModel = availableModels.find(m => m.name.includes("flash")) || availableModels[0];
         const modelName = bestModel.name;
 
-        // 3. الـ Prompt الجديد "العنيف" عشان ميبلمش
+        // 4. الـ Prompt "العبقري" اللي بيشمل كل حاجة والمواعيد
         const prompt = `
-        أنت مساعد ذكي لموقع Aura Planner بالفيوم. 
-        معلومات هامة جداً: البيانات التالية هي قاعات حقيقية من قاعدة بياناتنا، استخدمها للإجابة:
+        أنت مساعد ذكي ومصري (فيومي أصيل) لموقع Aura Planner.
+        مهمتك ترد على العلاء باستخدام البيانات الحقيقية دي من قاعدة بياناتنا:
         ${contextData}
 
-        التعليمات:
-        - لو سألك "عندكم قاعات إيه" أو سؤال عام، لازم ترص له أسماء القاعات اللي في البيانات فوق دي وممنوع تقول "مش عارف".
-        - رد بلهجة مصرية عامية (فيومي أصيل).
-        - لو البيانات فوق دي فاضية، رد وقول: "يا هندسة السيستم قاري إن مفيش قاعات، اتأكد من الداتا بيز".
+        التعليمات الإجبارية:
+        1. الرد يكون بلهجة مصرية عامية ودودة جداً.
+        2. لو العميل سأل عن "مواعيد حجز" أو "إيه الأيام الفاضية": بص فوراً في قسم (eventoptions). حلل التواريخ المتاحة والمحجوزة ورد عليه بدقة.
+        3. لو سأل عن أي نوع مناسبة (فرح، عيد ميلاد، تخرج، أوت دور): بص في الجدول المناسب لها (weddings, birthdays, graduations, outdoors) واديله ترشيحات بالأسماء والأسعار.
+        4. لو سأل عن منظمين حفلات: بص في قسم (planners).
+        5. ممنوع تقول "مش عارف" لو المعلومة موجودة في البيانات فوق. لو البيانات فاضية تماماً، قوله: "يا هندسة السيرفر مش قاري داتا، خليني أتأكدلك من الإدارة".
+        6. حافظ على سرية البيانات التقنية، اديه الخلاصة اللي تفيده بس.
 
         سؤال العميل: "${message}"
         `;
 
-        // 4. إرسال الطلب لـ Google
+        // 5. إرسال الطلب لـ Google
         const url = `https://generativelanguage.googleapis.com/v1/${modelName}:generateContent?key=${apiKey}`;
 
         const response = await axios.post(url, {
