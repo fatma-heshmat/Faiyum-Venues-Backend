@@ -6,13 +6,13 @@ exports.handleChat = async (req, res) => {
         const { message } = req.body;
         const apiKey = process.env.GEMINI_API_KEY;
 
-        // 1. تحديد الجداول اللي هنقرأ منها (كل حاجة ما عدا users)
+        // 1. تحديد كل الجداول المهمة (بدون اليوزرز للخصوصية)
         const collectionsToFetch = [
             'venues', 'birthdays', 'eventoptions', 'graduations', 
             'outdoors', 'planners', 'specialevents', 'weddings'
         ];
 
-        // 2. سحب الداتا من كل الجداول دي "ديناميكياً"
+        // 2. سحب الداتا من كل الجداول مرة واحدة
         const db = mongoose.connection.db;
         const allDataResults = await Promise.all(
             collectionsToFetch.map(async (colName) => {
@@ -21,38 +21,50 @@ exports.handleChat = async (req, res) => {
             })
         );
 
-        // تجميع كل الجداول في كائن واحد
         const combinedData = Object.assign({}, ...allDataResults);
         const contextData = JSON.stringify(combinedData);
 
-        // --- سطر كشف المشكلة للـ Debug ---
-        console.log("--- DEBUG: تم سحب الداتا من كل الجداول بنجاح ---");
+        console.log("--- DEBUG: تم تحديث البيانات الشاملة بنجاح ---");
 
-        // 3. تحديد الموديل (زي كودك القديم)
+        // 3. تحديد أفضل موديل متاح
         const modelsUrl = `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`;
         const modelsResponse = await axios.get(modelsUrl);
         const availableModels = modelsResponse.data.models;
         const bestModel = availableModels.find(m => m.name.includes("flash")) || availableModels[0];
         const modelName = bestModel.name;
 
-        // 4. الـ Prompt "العبقري" اللي بيشمل كل حاجة والمواعيد
+        // 4. الـ Mega Prompt (المخ الذكي لأورا)
         const prompt = `
-        أنت مساعد ذكي ومصري (فيومي أصيل) لموقع Aura Planner.
-        مهمتك ترد على العلاء باستخدام البيانات الحقيقية دي من قاعدة بياناتنا:
-        ${contextData}
+أنت "أورا"، المساعد الذكي الرسمي لموقع Aura Planner في الفيوم. أنت خبير وباحث في كل أماكن المناسبات (قاعات، كافيهات، نوادي، فيلات) ومنظمي الحفلات.
 
-        التعليمات الإجبارية:
-        1. الرد يكون بلهجة مصرية عامية ودودة جداً.
-        2. لو العميل سأل عن "مواعيد حجز" أو "إيه الأيام الفاضية": بص فوراً في قسم (eventoptions). حلل التواريخ المتاحة والمحجوزة ورد عليه بدقة.
-        3. لو سأل عن أي نوع مناسبة (فرح، عيد ميلاد، تخرج، أوت دور): بص في الجدول المناسب لها (weddings, birthdays, graduations, outdoors) واديله ترشيحات بالأسماء والأسعار.
-        4. لو سأل عن منظمين حفلات: بص في قسم (planners).
-        5. ممنوع تقول "مش عارف" لو المعلومة موجودة في البيانات فوق. لو البيانات فاضية تماماً، قوله: "يا هندسة السيرفر مش قاري داتا، خليني أتأكدلك من الإدارة".
-        6. حافظ على سرية البيانات التقنية، اديه الخلاصة اللي تفيده بس.
+---
+قاعدة البيانات الحقيقية المتاحة لك:
+${contextData}
+---
 
-        سؤال العميل: "${message}"
+تعليمات الرد الذكي (Smart Logic):
+
+1. **تحليل الطلب (Context Matching):**
+   - لو العميل بيدور على مكان "هادي" أو "صغير" (عيد ميلاد، قعدة صحاب): ابحث في [outdoors] والكافيهات في [venues]. لا تقترح قاعات زفاف ضخمة إلا لو طلب ذلك.
+   - لو المناسبة "فرح" أو "تخرج كبير": ركز على [weddings] و [venues] اللي بتشيل أعداد كبيرة.
+
+2. **احترافية المواعيد وحالة الحجز [eventoptions]:**
+   - أنت مسئول الحجز الآن. لو العميل سأل عن "يوم محدد" أو "أيام فاضية":
+   - ابحث في [eventoptions] واربط بين الـ (venueId) والتاريخ (date).
+   - إذا كان اليوم "booked" (محجوز): لا تقل "لا" فقط! بل اقترح مكاناً مشابهاً فاضي في نفس اليوم، أو اقترح أقرب يوم فاضي لنفس المكان.
+   - إذا كان اليوم "available" (متاح): شجعه على الحجز فوراً.
+
+3. **الشخصية (Tone of Voice):**
+   - لهجة مصرية (فيومية) عامية، خفيفة الظل، وذكية (يا هندسة، يا بطل، يا عريس، يا ذوق).
+   - لا تذكر أبداً أسماء تقنية (Collections, JSON, Null).
+   - لو معلومة مش عندك، قول: "دي محتاجة تأكيد من صاحب المكان، تحب أوصلك بيه؟" أو "سيبلي رقمك والإدارة هتكلمك".
+
+4. **قاعدة ذهبية:** أنت لا تخترع بيانات. التزم بالأسعار والخدمات الموجودة في الداتا المرفقة فقط.
+
+سؤال العميل الحالي: "${message}"
         `;
 
-        // 5. إرسال الطلب لـ Google
+        // 5. إرسال الطلب لـ Google Gemini
         const url = `https://generativelanguage.googleapis.com/v1/${modelName}:generateContent?key=${apiKey}`;
 
         const response = await axios.post(url, {
@@ -69,6 +81,6 @@ exports.handleChat = async (req, res) => {
         } else {
             console.error("System Error:", error.message);
         }
-        res.status(500).json({ error: "حصلت مشكلة، بص على الترمينال يا بطل." });
+        res.status(500).json({ error: "حصلت مشكلة في السيرفر، جرب تاني يا بطل." });
     }
 };
