@@ -16,31 +16,45 @@ exports.getVenues = asyncHandler(async (req, res) => {
 // دالة إضافة قاعة جديدة
 exports.createVenue = asyncHandler(async (req, res) => {
   // 1. استلام البيانات من Body 
-  const { name, description, price, location } = req.body;
+  const { name, description, price, location, capacity, rating , image} = req.body;
+// لو مفيش ملف مرفع، هنستخدم اللينك اللي جاي في خانة image
+  let finalImage = image; 
 
-  // 2. التأكد من إدخال البيانات الأساسية
-  if (!name || !price || !description || !location) {
-    res.status(400);
-    throw new Error("Please add all required fields (name, price, description, location)");
+  if (req.file) {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    finalImage = `${baseUrl}/uploads/${req.file.filename}`;
   }
 
-  // 3. التأكد من رفع الصورة
-  if (!req.file) {
+  // التأكد من إن الحاجات الأساسية موجودة (شيلنا شرط req.file الإجباري)
+  if (!name || !price || !description || !location || !capacity || !finalImage) {
     res.status(400);
-    throw new Error("Please upload an image");
+    throw new Error("Please add all required fields and an image link/file");
   }
 
- // هنجيب لينك السيرفر الحالي أوتوماتيك (زي: https://vxgw8lkl-5000.devtunnels.ms)
-  const baseUrl = `${req.protocol}://${req.get('host')}`;
-  const imageFullUrl = `${baseUrl}/uploads/${req.file.filename}`;
-
-  // 4. حفظ البيانات في الداتابيز
   const venue = await Venue.create({
-   ...req.body,
-    image: imageFullUrl, // هنخزن اللينك كامل عشان الفرونت إند يعرضه فوراً
+    name, description, price, location, capacity, rating,
+    image: finalImage, 
   });
   // 5. رد السيرفر بنجاح العملية
   res.status(201).json(venue);
 });
 
+// الحصول على تفاصيل قاعة واحدة فقط
+exports.getVenueDetails = async (req, res) => {
+  try {
+    // بناخد الـ ID من الرابط (URL)
+    const venueId = req.params.id; 
 
+    // بندور في الداتابيز بالـ ID ده
+    const venue = await Venue.findById(venueId);
+
+    if (!venue) {
+      return res.status(404).json({ message: "Venue not found!" });
+    }
+
+    // بنبعت بيانات القاعة اللي لقيناها
+    res.status(200).json(venue);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};

@@ -25,6 +25,13 @@ app.use('/api/venues', require('./src/routes/venue.routes'));
 app.use('/api/outdoors', require('./src/routes/outdoor.routes'));
 // الـ Route الجديد بتاع الأفراح اللي طلباتك هتكون عليه
 app.use('/api/weddings', require('./src/routes/wedding.routes'));
+app.use('/api/birthdays', require('./src/routes/birthday.routes'));
+app.use('/api/graduations', require('./src/routes/graduation.routes'));
+app.use('/api/special-events', require('./src/routes/specialEvent.routes'));
+app.use('/api/planners', require('./src/routes/planner.routes'));
+//app.use('/api/signup', require('./src/routes/SignUp.routes'));
+app.use('/api/auth', require('./src/routes/auth.routes'));
+app.use('/api', require('./src/routes/eventOptions.routes'));
 
 // 6. تشغيل السيرفر بـ Port ديناميكي (عشان لما ترفعيه على Render أو Railway)
 const PORT = process.env.PORT || 5000;

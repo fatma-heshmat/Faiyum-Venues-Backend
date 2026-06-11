@@ -5,7 +5,12 @@ const venueSchema = new mongoose.Schema({
   description: String,
   price: Number,
   image: String,
-  location: String
+  location: String,
+  capacity: Number,
+  rating: {
+    type: Number,
+    default: 0
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Venue", venueSchema);

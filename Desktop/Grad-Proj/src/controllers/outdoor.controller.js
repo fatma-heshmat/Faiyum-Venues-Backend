@@ -7,9 +7,22 @@ exports.getOutdoors = asyncHandler(async (req, res) => {
   res.status(200).json(outdoors);
 });
 
+// 2. الحصول على تفاصيل قاعة أوت دور واحدة بالـ ID (دي الجزئية اللي طلبتيها)
+exports.getOutdoorDetails = asyncHandler(async (req, res) => {
+  const { id } = req.params; 
+  const outdoor = await Outdoor.findById(id);
+
+  if (!outdoor) {
+    res.status(404);
+    throw new Error("Outdoor venue not found!");
+  }
+
+  res.status(200).json(outdoor);
+});
+
 // إضافة قاعة Outdoor جديدة
 exports.createOutdoor = asyncHandler(async (req, res) => {
-  const { name, description, price, location , image } = req.body;
+  const { name, description, price, location , image , capacity, rating } = req.body;
 
   // لو فيه ملف مرفوع هيستخدمه، لو مفيش هيستخدم اللينك اللي في الـ body
   let finalImage = image;
@@ -33,6 +46,8 @@ exports.createOutdoor = asyncHandler(async (req, res) => {
 
   const outdoor = await Outdoor.create({
     name, description, price, location,
+    capacity: capacity || 0, // تخزين السعة
+    rating: rating || 0,
     image: finalImage
   });
 
