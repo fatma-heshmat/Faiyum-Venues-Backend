@@ -26,6 +26,10 @@ app.use('/api/planners', require('./src/routes/planner.routes'));
 app.use('/api/auth', require('./src/routes/auth.routes'));
 app.use('/api', require('./src/routes/eventOptions.routes'));
 app.use('/api/chat', require('./src/routes/chat.routes'));
+const bookingRoutes = require('./routes/bookingRoutes');
+
+// تفعيل الـ Route في الـ Express App
+app.use('/api/bookings', bookingRoutes);
 
 // (تعديل 3) تظبيط البورت عشان Railway يقدر يغيره براحته
 const PORT = process.env.PORT || 5000;
