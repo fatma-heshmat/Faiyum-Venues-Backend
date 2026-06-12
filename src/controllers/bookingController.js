@@ -3,12 +3,21 @@ const Booking = require('../models/Booking');
 
 // @desc    Create a new booking request (Customer)
 const createBooking = asyncHandler(async (req, res) => {
-    // الكاستمر بيبعت اسمه، اسم القاعة، والتاريخ كـ كلام عادي
     const { customerName, hallName, bookingDate } = req.body;
 
     if (!customerName || !hallName || !bookingDate) {
         res.status(400);
         throw new Error('Please fill all fields: customerName, hallName, bookingDate');
+    }
+ 
+    const existingBooking = await Booking.findOne({ 
+        hallName: hallName, 
+        bookingDate: new Date(bookingDate) 
+    });
+
+    if (existingBooking) {
+        res.status(400);
+        throw new Error('عفواً، هذه القاعة محجوزة بالفعل في هذا التاريخ!');
     }
 
     const booking = await Booking.create({
@@ -22,7 +31,6 @@ const createBooking = asyncHandler(async (req, res) => {
         data: booking
     });
 });
-
 // @desc    Get all booking requests (Admin)
 const getAllBookings = asyncHandler(async (req, res) => {
     // بيجيب الطلبات عل طول من غير لفة الـ populate المعقدة
