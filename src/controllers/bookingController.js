@@ -6,18 +6,24 @@ const createBooking = asyncHandler(async (req, res) => {
     const { customerName, hallName, bookingDate } = req.body;
 
     if (!customerName || !hallName || !bookingDate) {
-        res.status(400);
-        throw new Error('Please fill all fields: customerName, hallName, bookingDate');
+        return res.status(400).json({
+            success: false,
+            message: 'برجاء ملء جميع الحقول المطلوبة'
+        });
     }
- 
+
+    // التأكد إن القاعة مش محجوزة في نفس اليوم
     const existingBooking = await Booking.findOne({ 
-        hallName: hallName, 
-        bookingDate: new Date(bookingDate) 
+        hallName, 
+        bookingDate 
     });
 
+    // بدل الـ throw new Error، هنرد مباشرة على بوست مان كـ JSON
     if (existingBooking) {
-        res.status(400);
-        throw new Error('عفواً، هذه القاعة محجوزة بالفعل في هذا التاريخ!');
+        return res.status(400).json({
+            success: false,
+            message: 'عفواً، هذه القاعة محجوزة بالفعل في هذا التاريخ!'
+        });
     }
 
     const booking = await Booking.create({
