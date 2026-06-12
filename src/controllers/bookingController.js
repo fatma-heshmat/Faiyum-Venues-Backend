@@ -38,8 +38,22 @@ const getAllBookings = asyncHandler(async (req, res) => {
     });
 });
 
-module.exports = { createBooking, getAllBookings };
+// @desc    Update booking status (Admin)
+const updateBookingStatus = asyncHandler(async (req, res) => {
+    const { status } = req.body;
+    const booking = await Booking.findById(req.params.id);
+    
+    if (!booking) {
+        return res.status(404).json({ success: false, message: 'الحجز غير موجود' });
+    }
+    
+    booking.status = status || booking.status;
+    await booking.save();
+    res.status(200).json({ success: true, data: booking });
+});
+
+module.exports = { createBooking, getAllBookings , updateBookingStatus};
 
 
 
-module.exports = { createBooking, getAllBookings };
+
