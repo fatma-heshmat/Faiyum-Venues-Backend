@@ -1,20 +1,17 @@
 const mongoose = require('mongoose');
 
 const bookingSchema = new mongoose.Schema({
-    customerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+    customerName: {
+        type: String,
         required: true
     },
-    // كنا عاملين الحقل ده eventOptions قبل كده، فتقدري تربطيه بـ ID القاعة
-    venueId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Wedding', // مربوط بجدول القاعات اللي عملناه
+    hallName: {
+        type: String,
         required: true
     },
     bookingDate: {
         type: Date,
-        required: [true, 'Please add the booking date']
+        required: true
     },
     status: {
         type: String,
