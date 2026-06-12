@@ -3,20 +3,12 @@ const mongoose = require('mongoose');
 const bookingSchema = mongoose.Schema({
     customerName: {
         type: String,
-        required: true
+        required: [true, 'برجاء إدخال اسم العميل']
     },
-    hallName: {
-        type: String,
-        required: true
-    },
-    bookingDate: {
-        type: String,  
-        required: true
-    },
-    planner: {
+    eventOption: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Planner',  
-        required: [true, 'برجاء اختيار منظم الحفلات (Planner)']
+        ref: 'eventOptions', 
+        required: true
     },
     status: {
         type: String,
@@ -28,3 +20,14 @@ const bookingSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);
+
+
+
+
+
+
+
+
+
+
+
