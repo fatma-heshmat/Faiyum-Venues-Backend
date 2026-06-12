@@ -1,15 +1,11 @@
 const mongoose = require("mongoose");
-
 const connectDB = async () => {
   try {
-    // هيرجع يقرأ من المتغير اللي هنحطه في لوحة تحكم Railway
-    const conn = await mongoose.connect(process.env.MONGODB_URI);
-    
-    console.log(`✅ MongoDB Connected to: ${conn.connection.name}`);
-  } catch (error) {
-    console.error(`❌ DB Connection Error: ${error.message}`);
+   await mongoose.connect("mongodb+srv://fatma-heshmat9:Fatma2004@cluster0.fp6jf4g.mongodb.net/VenuesDB?retryWrites=true&w=majority");
+    console.log("✅ MongoDB Connected to Atlas");
+  } catch (err) {
+    console.error("❌ Connection Error:", err.message);
     process.exit(1);
   }
 };
-
 module.exports = connectDB;
