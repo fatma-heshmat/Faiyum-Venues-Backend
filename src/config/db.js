@@ -2,16 +2,11 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    const connString = process.env.MONGO_URI || process.env.DATABASE_URL || process.env.MONGO_URL;
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
     
-    if (!connString) {
-      throw new Error("Connection string is missing! Check your .env file or Railway variables.");
-    }
-
-    await mongoose.connect(connString);
-    console.log("✅ MongoDB Connected to Atlas");
-  } catch (err) {
-    console.error("❌ Connection Error:", err.message);
+    console.log(✅ MongoDB Connected to: ${conn.connection.name});
+  } catch (error) {
+    console.error(❌ DB Connection Error: ${error.message});
     process.exit(1);
   }
 };
