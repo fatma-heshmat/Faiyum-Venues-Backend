@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Booking = require('../models/Booking');
 const Planner = require('../models/Planner');
+const EventOption = require('../models/eventOptions');
 
 // @desc    Create a new booking request (Customer)
 const createBooking = asyncHandler(async (req, res) => {
