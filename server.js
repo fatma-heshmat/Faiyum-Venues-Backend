@@ -1,7 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require('cors'); // (تعديل 1) استدعاء مكتبة الـ CORS
 const path = require('path'); // ناديت عليها بس، من غير npm install
-require("dotenv").config();
+const mongoose = require('mongoose');
 const connectDB = require("./src/config/db");
 
 connectDB();
