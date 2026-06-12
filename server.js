@@ -1,13 +1,12 @@
 require("dotenv").config();
 const express = require("express");
-const cors = require('cors'); // (تعديل 1) استدعاء مكتبة الـ CORS
+const connectDB = require('./src/config/db'); 
+const cors = require('cors'); 
 const path = require('path'); // ناديت عليها بس، من غير npm install
 const mongoose = require('mongoose');
-const connectDB = require("./src/config/db");
 
+const app = express();
 connectDB();
-
-const app = express(); // هنا بنشغل الإكسبريس
 
 // Middleware
 app.use(cors()); // (تعديل 2) السماح للفرونت إند إنه يكلم السيرفر من غير ما المتصفح يمنعه
