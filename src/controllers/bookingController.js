@@ -3,17 +3,22 @@ const Booking = require('../models/Booking');
 const Planner = require('../models/Planner');
 
 // @desc    Create a new booking request (Customer)
+// @desc    Create a new booking request (Customer)
 const createBooking = asyncHandler(async (req, res) => {
-    const { customerName, hallName, bookingDate, plannerId } = req.body;
+    // المرة دي الفرنت-إند هيبعت لنا الـ plannerName (الاسم نفسه)
+    const { customerName, hallName, bookingDate, plannerName } = req.body;
 
-    if (!customerName || !hallName || !bookingDate || !plannerId) {
+    if (!customerName || !hallName || !bookingDate || !plannerName) {
         return res.status(400).json({
             success: false,
-            message: 'برجاء ملء جميع الحقول المطلوبة بما فيها اختيار الـ Planner'
+            message: 'برجاء ملء جميع الحقول المطلوبة بما فيها اسم الـ Planner'
         });
     }
 
-    const plannerExists = await Planner.findById(plannerId);
+    // 🔎 الحركة السحرية: هنروح ندور في جدول البلانرز على بلانر عنده نفس الاسم ده
+    const plannerExists = await Planner.findOne({ name: plannerName });
+    
+    // لو ملحقناش بلانر بالاسم ده في الداتابيز، هنرفض الحجز
     if (!plannerExists) {
         return res.status(404).json({
             success: false,
@@ -21,11 +26,8 @@ const createBooking = asyncHandler(async (req, res) => {
         });
     }
 
-    const existingBooking = await Booking.findOne({ 
-        hallName, 
-        bookingDate 
-    });
-
+    // التأكد إن القاعة مش محجوزة في نفس اليوم
+    const existingBooking = await Booking.findOne({ hallName, bookingDate });
     if (existingBooking) {
         return res.status(400).json({
             success: false,
@@ -33,12 +35,12 @@ const createBooking = asyncHandler(async (req, res) => {
         });
     }
 
-    // 3. إنشاء الحجز وتخزين الـ Planner ID جواه
+    // إنشاء الحجز وبناخد الـ ID بتاع البلانر اللي لقيناه أوتوماتيك ونخزنه
     const booking = await Booking.create({
         customerName, 
         hallName,
         bookingDate,
-        planner: plannerId // بيتخزن هنا الـ ID بتاعه
+        planner: plannerExists._id // السيرفر هنا ذكي وبياخد الـ ID لوحده من الاسم اللي دورنا بيه
     });
 
     res.status(201).json({
