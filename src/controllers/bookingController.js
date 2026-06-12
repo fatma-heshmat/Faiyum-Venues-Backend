@@ -35,7 +35,7 @@ const createBooking = asyncHandler(async (req, res) => {
         bookingDate,
         planner: plannerExists._id 
     });
-    const populatedBooking = await Booking.findById(newBooking._id).populate('planner', 'name');
+    const populatedBooking = await Booking.findById(newBooking._id).populate('planner', 'name -_id');
 
     res.status(201).json({
         success: true,
@@ -45,7 +45,7 @@ const createBooking = asyncHandler(async (req, res) => {
 
 // @desc    Get all bookings (Admin Dashboard)
 const getAllBookings = asyncHandler(async (req, res) => {
-    const bookings = await Booking.find({}).populate('planner', 'name'); 
+    const bookings = await Booking.find({}).populate('planner', 'name -_id'); 
     
     res.status(200).json({
         success: true,
