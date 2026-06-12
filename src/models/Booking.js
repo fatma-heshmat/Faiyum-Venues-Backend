@@ -7,7 +7,7 @@ const bookingSchema = mongoose.Schema({
     },
     eventOption: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'eventOptions', 
+        ref: 'EventOptions', 
         required: true
     },
     status: {
