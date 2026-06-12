@@ -43,9 +43,11 @@ const createBooking = asyncHandler(async (req, res) => {
         planner: plannerExists._id // السيرفر هنا ذكي وبياخد الـ ID لوحده من الاسم اللي دورنا بيه
     });
 
+ const populatedBooking = await Booking.findById(newBooking._id).populate('planner', 'name');
+
     res.status(201).json({
         success: true,
-        data: booking
+        data: populatedBooking
     });
 });
 
