@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const bookingSchema = new mongoose.Schema({
+const bookingSchema = mongoose.Schema({
     customerName: {
         type: String,
         required: true
@@ -10,12 +10,17 @@ const bookingSchema = new mongoose.Schema({
         required: true
     },
     bookingDate: {
-        type: Date,
+        type: String,  
         required: true
+    },
+    planner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Planner',  
+        required: [true, 'برجاء اختيار منظم الحفلات (Planner)']
     },
     status: {
         type: String,
-        enum: ['pending', 'accepted', 'rejected'],
+        required: true,
         default: 'pending'
     }
 }, {
