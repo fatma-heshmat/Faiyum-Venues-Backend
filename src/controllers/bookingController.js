@@ -25,12 +25,16 @@ const createBooking = asyncHandler(async (req, res) => {
     res.status(201).json({ success: true, data: populatedBooking });
 });
 
-// @desc    جلب الحجوزات للداشبورد (Admin Dashboard)
+// @desc    عرض جدول الحجوزات في الداشبورد لكل أنواع الأماكن (الآدمن)
 const getAllBookings = asyncHandler(async (req, res) => {
     const bookings = await Booking.find({})
         .populate({
             path: 'eventOption',
-            select: 'hallName plannerName bookingDate -_id'
+            select: 'plannerName eventDate place placeType -_id', //
+            populate: {
+                path: 'place', // 👈 المونجو هنا هتروح للموديل الصح لوحدها ديناميكياً!
+                select: 'name -_id' // هات اسم المكان (اتأكدي إن حقل الاسم في الموديلات الأربعة اسمه name أو وحدوه)
+            }
         });
 
     res.status(200).json({
