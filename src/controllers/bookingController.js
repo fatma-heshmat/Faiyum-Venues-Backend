@@ -4,72 +4,42 @@ const Planner = require('../models/Planner');
 
 // @desc    Create a new booking request (Customer)
 const createBooking = asyncHandler(async (req, res) => {
-    const { customerName, hallName, bookingDate, plannerName } = req.body;
+    const { customerName, eventOptionId } = req.body;
 
-    if (!customerName || !hallName || !bookingDate || !plannerName) {
-        return res.status(400).json({
-            success: false,
-            message: 'برجاء ملء جميع الحقول المطلوبة بما فيها اسم الـ Planner'
-        });
-    }
-
-    const plannerExists = await Planner.findOne({ name: plannerName });
-    if (!plannerExists) {
-        return res.status(404).json({
-            success: false,
-            message: 'عفواً، منظم الحفلات (Planner) المختار غير موجود في النظام!'
-        });
-    }
-
-    const existingBooking = await Booking.findOne({ hallName, bookingDate });
-    if (existingBooking) {
-        return res.status(400).json({
-            success: false,
-            message: 'عفواً، هذه القاعة محجوزة بالفعل في هذا التاريخ!'
-        });
+    if (!customerName || !eventOptionId) {
+        return res.status(400).json({ success: false, message: 'برجاء إرسال اسم الكاستمر والـ eventOptionId' });
     }
 
     const newBooking = await Booking.create({
-        customerName, 
-        hallName,
-        bookingDate,
-        planner: plannerExists._id 
+        customerName,
+        eventOption: eventOptionId
     });
-    const populatedBooking = await Booking.findById(newBooking._id).populate('planner', 'name -_id');
 
-    res.status(201).json({
-        success: true,
-        data: populatedBooking
-    });
+    const populatedBooking = await Booking.findById(newBooking._id)
+        .populate({
+            path: 'eventOption',
+            select: 'hallName plannerName bookingDate -_id'
+        });
+
+    res.status(201).json({ success: true, data: populatedBooking });
 });
 
-// @desc    Get all bookings (Admin Dashboard)
+// @desc    جلب الحجوزات للداشبورد (Admin Dashboard)
 const getAllBookings = asyncHandler(async (req, res) => {
-    const bookings = await Booking.find({}).populate('planner', 'name -_id'); 
-    
+    const bookings = await Booking.find({})
+        .populate({
+            path: 'eventOption',
+            select: 'hallName plannerName bookingDate -_id'
+        });
+
     res.status(200).json({
         success: true,
         data: bookings
     });
 });
 
-// @desc    Update booking status (Admin Accept/Reject)
-const updateBookingStatus = asyncHandler(async (req, res) => {
-    const { status } = req.body;
-    const booking = await Booking.findById(req.params.id);
+module.exports = { createBooking, getAllBookings };
 
-    if (!booking) {
-        res.status(404);
-        throw new Error('Booking request not found');
-    }
 
-    booking.status = status;
-    await booking.save();
 
-    res.status(200).json({
-        success: true,
-        data: booking
-    });
-});
-
-module.exports = { createBooking, getAllBookings, updateBookingStatus };
+module.exports = { createBooking, getAllBookings };
