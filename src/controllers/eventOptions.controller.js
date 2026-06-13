@@ -4,11 +4,13 @@ const createEventOptions = async (req, res) => {
 try {
     const { eventDate, plannerName, place } = req.body;
 
-    const existingPlaceEvent = await EventOptions.findOne({ eventDate, place });
-    if (existingPlaceEvent) {
-      return res.status(400).json({
-        message: "This date is already booked for this venue."
-      });
+    if (place) {
+      const existingPlaceEvent = await EventOptions.findOne({ eventDate, place });
+      if (existingPlaceEvent) {
+        return res.status(400).json({
+          message: "This date is already booked for this venue."
+        });
+      }
     }
 
     const existingPlannerEvent = await EventOptions.findOne({ eventDate, plannerName });
