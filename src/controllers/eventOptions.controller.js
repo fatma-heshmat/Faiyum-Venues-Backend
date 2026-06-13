@@ -4,25 +4,25 @@ const createEventOptions = async (req, res) => {
   try {
     const { eventDate, plannerName } = req.body;
 
-    const dateConflict = await EventOptions.findOne({ eventDate: eventDate });
-    
-    if (dateConflict) {
-      return res.status(400).json({
-        success: false,
-        message: `عفواً، تاريخ اليوم ${new Date(eventDate).toLocaleDateString()} محجوز بالفعل في السيستم! يرجى اختيار يوم آخر.`
-      });
-    }
-
-    // 2️⃣ الكوندشن الثاني: التشيك على البلانر في نفس التاريخ (أمان زيادة)
-    const plannerConflict = await EventOptions.findOne({
-      eventDate: eventDate,
-      plannerName: plannerName
+    const conflictBooking = await EventOptions.findOne({
+      $or: [
+        { eventDate: eventDate }, 
+        { eventDate: eventDate, plannerName: plannerName } 
+      ]
     });
 
-    if (plannerConflict) {
+    if (conflictBooking) {
+      
+      if (conflictBooking.plannerName === plannerName && conflictBooking.eventDate.toISOString() === new Date(eventDate).toISOString()) {
+        return res.status(400).json({
+          success: false,
+          message: `Conflict: Planner (${plannerName}) is already booked on this date!`
+        });
+      }
+
       return res.status(400).json({
         success: false,
-        message: `عفواً، البلانر ${plannerName} مشغول ومحجوز بالفعل في هذا التاريخ!`
+        message: `Conflict: The date ${new Date(eventDate).toLocaleDateString()} is already fully booked! Please choose another date.`
       });
     }
 
@@ -30,14 +30,14 @@ const createEventOptions = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "تم حفظ الاختيارات بنجاح وبدون أي تضاد!",
+      message: "Event options saved successfully!",
       data: newEventOption
     });
 
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "حدث خطأ في السيرفر: " + error.message
+      message: "Server Error: " + error.message
     });
   }
 };
