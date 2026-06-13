@@ -34,8 +34,29 @@ try {
     });
   }
 };
+// @desc    Get all event options
+const getEventOptions = async (req, res) => {
+  try {
+    const allOptions = await EventOptions.find({}).sort({ createdAt: -1 });
+    
+    res.status(200).json({
+      success: true,
+      count: allOptions.length,
+      data: allOptions
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server Error: " + error.message
+    });
+  }
+};
 
-module.exports = { createEventOptions };
+module.exports = { 
+  createEventOptions,
+  getEventOptions 
+};
+
 
 
 
