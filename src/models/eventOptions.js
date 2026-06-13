@@ -42,6 +42,10 @@ const eventOptionsSchema = new mongoose.Schema({
       },
       message: "Event date cannot be in the past. Please select a future date."
     }
+  },
+  customerName: {
+    type: String,
+    required: [true, "Customer name is required"]
   }
 });
 
