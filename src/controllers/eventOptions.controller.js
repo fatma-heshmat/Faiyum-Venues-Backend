@@ -4,15 +4,25 @@ const createEventOptions = async (req, res) => {
   try {
     const { eventDate, plannerName } = req.body;
 
-    const conflictBooking = await EventOptions.findOne({
+    const dateConflict = await EventOptions.findOne({ eventDate: eventDate });
+    
+    if (dateConflict) {
+      return res.status(400).json({
+        success: false,
+        message: `عفواً، تاريخ اليوم ${new Date(eventDate).toLocaleDateString()} محجوز بالفعل في السيستم! يرجى اختيار يوم آخر.`
+      });
+    }
+
+    // 2️⃣ الكوندشن الثاني: التشيك على البلانر في نفس التاريخ (أمان زيادة)
+    const plannerConflict = await EventOptions.findOne({
       eventDate: eventDate,
       plannerName: plannerName
     });
 
-    if (conflictBooking) {
+    if (plannerConflict) {
       return res.status(400).json({
         success: false,
-        message: `عفواً، البلانر ${plannerName} غير متاح في هذا التاريخ!`
+        message: `عفواً، البلانر ${plannerName} مشغول ومحجوز بالفعل في هذا التاريخ!`
       });
     }
 
@@ -20,7 +30,7 @@ const createEventOptions = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "تم حفظ الاختيارات بنجاح!",
+      message: "تم حفظ الاختيارات بنجاح وبدون أي تضاد!",
       data: newEventOption
     });
 
