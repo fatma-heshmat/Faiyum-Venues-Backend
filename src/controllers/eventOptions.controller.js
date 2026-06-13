@@ -1,62 +1,36 @@
 const EventOptions = require("../models/eventOptions");
 
 const createEventOptions = async (req, res) => {
-try {
-    const { eventDate, plannerName, place } = req.body;
+  try {
+    const { eventDate, plannerName } = req.body;
 
-    if (place) {
-      const existingPlaceEvent = await EventOptions.findOne({ eventDate, place });
-      if (existingPlaceEvent) {
-        return res.status(400).json({
-          message: "This date is already booked for this venue."
-        });
-      }
-    }
+    const conflictBooking = await EventOptions.findOne({
+      eventDate: eventDate,
+      plannerName: plannerName
+    });
 
-    const existingPlannerEvent = await EventOptions.findOne({ eventDate, plannerName });
-    if (existingPlannerEvent) {
+    if (conflictBooking) {
       return res.status(400).json({
-        message: "This planner is already booked on this date. Please choose another planner or date."
+        success: false,
+        message: `عفواً، البلانر ${plannerName} غير متاح في هذا التاريخ!`
       });
     }
 
-    const newOptions = new EventOptions(req.body);
-    const savedData = await newOptions.save();
+    const newEventOption = await EventOptions.create(req.body);
 
     res.status(201).json({
-      message: "Event options saved successfully",
-      data: savedData
+      success: true,
+      message: "تم حفظ الاختيارات بنجاح!",
+      data: newEventOption
     });
 
-  } catch (error) {
-    res.status(400).json({ 
-      message: error.message 
-    });
-  }
-};
-// @desc    Get all event options
-const getEventOptions = async (req, res) => {
-  try {
-    const allOptions = await EventOptions.find({}).sort({ createdAt: -1 });
-    
-    res.status(200).json({
-      success: true,
-      count: allOptions.length,
-      data: allOptions
-    });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Server Error: " + error.message
+      message: "حدث خطأ في السيرفر: " + error.message
     });
   }
 };
-
-module.exports = { 
-  createEventOptions,
-  getEventOptions 
-};
-
 
 
 
