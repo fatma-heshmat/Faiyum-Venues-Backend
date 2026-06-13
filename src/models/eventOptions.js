@@ -46,7 +46,11 @@ const eventOptionsSchema = new mongoose.Schema({
   customerName: {
     type: String,
     required: [true, "Customer name is required"]
-  }
+  },
+  plannerName: {
+  type: String,
+  required: [true, "Planner name is required"]
+}
 });
 
 module.exports = mongoose.model("EventOptions", eventOptionsSchema);
