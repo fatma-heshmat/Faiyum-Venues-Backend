@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { createEventOptions, getEventOptions } = require("../controllers/eventOptions.controller");
 
-const { protect } = require("../middleware/auth.middleware"); 
+const { protect } = require("../middleware/auth"); 
 const { restrictTo } = require("../middleware/role.middleware");
 
 router.post("/event-options", createEventOptions);
