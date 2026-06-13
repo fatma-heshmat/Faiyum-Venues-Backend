@@ -32,6 +32,22 @@ const createEventOptions = async (req, res) => {
   }
 };
 
+const getEventOptions = async (req, res) => {
+  try {
+    const latestOption = await EventOptions.findOne({}).sort({ createdAt: -1 });
+    
+    res.status(200).json({
+      success: true,
+      data: latestOption
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server Error: " + error.message
+    });
+  }
+};
+
 module.exports = {
   createEventOptions,
   getEventOptions
