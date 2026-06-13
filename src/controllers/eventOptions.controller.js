@@ -2,14 +2,19 @@ const EventOptions = require("../models/eventOptions");
 
 const createEventOptions = async (req, res) => {
 try {
-    const { eventDate, place, placeType } = req.body;
+    const { eventDate, plannerName, place } = req.body;
 
-    // التأكد إن المكان ده مش محجوز في اليوم ده
-    const existingEvent = await EventOptions.findOne({ eventDate, place });
-
-    if (existingEvent) {
+    const existingPlaceEvent = await EventOptions.findOne({ eventDate, place });
+    if (existingPlaceEvent) {
       return res.status(400).json({
         message: "This date is already booked for this venue."
+      });
+    }
+
+    const existingPlannerEvent = await EventOptions.findOne({ eventDate, plannerName });
+    if (existingPlannerEvent) {
+      return res.status(400).json({
+        message: "This planner is already booked on this date. Please choose another planner or date."
       });
     }
 
@@ -22,13 +27,13 @@ try {
     });
 
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ 
+      message: error.message 
+    });
   }
 };
 
-module.exports = {
-  createEventOptions
-};
+module.exports = { createEventOptions };
 
 
 
