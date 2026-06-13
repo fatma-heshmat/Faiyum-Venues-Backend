@@ -32,6 +32,13 @@ const createEventOptions = async (req, res) => {
   }
 };
 
+module.exports = {
+  createEventOptions,
+  getEventOptions
+};
+
+
+
 
 
 
