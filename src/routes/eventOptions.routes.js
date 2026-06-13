@@ -1,13 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
-const { 
-  createEventOptions, 
-  getEventOptions 
-} = require("../controllers/eventOptions.controller");
+const eventController = require("../controllers/eventOptions.controller");
 
-router.route("/")
-  .post(createEventOptions)   
-  .get(getEventOptions);
+router.post("/event-options", eventController.createEventOptions);
+router.get("/event-options", eventController.getEventOptions);
 
 module.exports = router;
