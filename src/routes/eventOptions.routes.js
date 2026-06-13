@@ -1,9 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-const eventController = require("../controllers/eventOptions.controller");
+const { createEventOptions, getEventOptions } = require("../controllers/eventOptions.controller");
 
-router.post("/event-options", eventController.createEventOptions);
-router.get("/event-options", eventController.getEventOptions);
+const { protect } = require("../middleware/auth.middleware"); 
+const { restrictTo } = require("../middleware/role.middleware");
+
+router.post("/event-options", createEventOptions);
+
+router.get("/event-options", protect, restrictTo("admin", "planner"), getEventOptions);
 
 module.exports = router;
