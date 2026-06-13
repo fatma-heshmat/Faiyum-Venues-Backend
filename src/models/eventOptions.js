@@ -42,19 +42,7 @@ const eventOptionsSchema = new mongoose.Schema({
       },
       message: "Event date cannot be in the past. Please select a future date."
     }
-  }, 
-  
-  place: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    refPath: 'placeType' 
-  },
-
-  placeType: {
-    type: String,
-    required: true,
-    enum: ['Venue', 'Outdoor', 'Birthday', 'SpecialEvent', 'Graduation', 'Wedding'] 
-  }  
+  }
 });
 
 module.exports = mongoose.model("EventOptions", eventOptionsSchema);
