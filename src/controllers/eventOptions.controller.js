@@ -34,11 +34,12 @@ const createEventOptions = async (req, res) => {
 
 const getEventOptions = async (req, res) => {
   try {
-    const latestOption = await EventOptions.findOne({}).sort({ createdAt: -1 });
+    const allOptions = await EventOptions.find({}).sort({ createdAt: -1 });
     
     res.status(200).json({
       success: true,
-      data: latestOption
+      count: allOptions.length, 
+      data: allOptions         
     });
   } catch (error) {
     res.status(500).json({
