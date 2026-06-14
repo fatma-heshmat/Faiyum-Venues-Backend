@@ -77,7 +77,7 @@ const updateEventStatus = async (req, res) => {
     const updatedBooking = await EventOptions.findByIdAndUpdate(
       id,
       { status: status },
-      { new: true, runValidators: true } // نيو بتخليه يرجع الحجز بعد ما اتعدل
+      { returnDocument: 'after', runValidators: true } // نيو بتخليه يرجع الحجز بعد ما اتعدل
     );
 
     if (!updatedBooking) {
