@@ -59,9 +59,49 @@ const getEventOptions = async (req, res) => {
   }
 };
 
+// @route   PATCH /api/event-options/:id/status
+const updateEventStatus = async (req, res) => {
+  try {
+    const { id } = req.params; // بناخد الـ ID بتاع الحجز نفسه
+    const { status } = req.body; // بناخد الحالة الجديدة (accepted أو cancelled)
+
+    // 🚨 تأكيد أمان: بنضمن إن الفرنت إند باعت حالة صح مش أي كلام
+    if (!["accepted", "cancelled"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status! Must be 'accepted' or 'cancelled'."
+      });
+    }
+
+    // بنحدث الحالة في الداتابيز
+    const updatedBooking = await EventOptions.findByIdAndUpdate(
+      id,
+      { status: status },
+      { new: true, runValidators: true } // نيو بتخليه يرجع الحجز بعد ما اتعدل
+    );
+
+    if (!updatedBooking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found!"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Booking has been successfully ${status}!`,
+      data: updatedBooking
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error: " + error.message });
+  }
+};
+
 module.exports = {
   createEventOptions,
-  getEventOptions
+  getEventOptions, 
+  updateEventStatus
 };
 
 
