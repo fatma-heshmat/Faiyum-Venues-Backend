@@ -50,6 +50,11 @@ const eventOptionsSchema = new mongoose.Schema({
   plannerName: {
   type: String,
   required: [true, "Planner name is required"]
+},
+status: {
+  type: String,
+  enum: ["pending", "accepted", "cancelled"],
+  default: "pending" 
 }
 });
 
