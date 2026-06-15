@@ -1,65 +1,31 @@
 const mongoose = require("mongoose");
 
 const eventOptionsSchema = new mongoose.Schema({
-
-  musicType: {
-    type: [String]
+  venueId: { type: String }, 
+  venueName: { type: String }, 
+  type: { type: String, default: "venues" },
+  originalType: { type: String }, 
+  eventType: { type: String },
+  musicType: { type: [String] },
+  drinks: { type: Boolean, default: false },
+  meals: { type: Boolean, default: false },
+  dessert: { type: Boolean, default: false },
+  eventDate: { type: Date, required: [true, "Event date is required"] },
+  planner: { type: String, required: [true, "Planner name is required"] },
+  customName: { type: String },
+  payment: {
+    method: { type: String },
+    amount: { type: Number },
+    status: { type: String, default: "pending" }
   },
-
-  menuType: {
+  status: {
     type: String,
-    enum: ["set menu", "open buffet" ]
-  },
-
-  drinks: {
-    type: Boolean,
-    default: false
-  },
-
-  meals: {
-    type: Boolean,
-    default: false
-  },
-
-  dessert: {
-    type: Boolean,
-    default: false
-  },
-   
-  cakeType: {
-    type: String,
-    enum: ["wedding cake", "birthday cake", "graduation cake" , "special cake"]
-  },
-
-  eventDate: {
-    type: Date,
-    required: [true, "Event date is required"],
-    validate: {
-      validator: function(value) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return value >= today;
-      },
-      message: "Event date cannot be in the past. Please select a future date."
-    }
-  },
-  customerName: {
-    type: String,
-    required: [true, "Customer name is required"]
-  },
-  plannerName: {
-  type: String,
-  required: [true, "Planner name is required"]
-},
-status: {
-  type: String,
-  enum: ["pending", "accepted", "cancelled"],
-  default: "pending" 
-}
-});
+    enum: ["pending", "accepted", "cancelled"],
+    default: "pending"
+  }
+}, { timestamps: true });
 
 module.exports = mongoose.model("EventOptions", eventOptionsSchema);
-
 
 
 
