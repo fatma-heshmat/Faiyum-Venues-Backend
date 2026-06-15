@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const eventOptionsSchema = new mongoose.Schema({
   venueId: { type: String }, 
   venueName: { type: String }, 
-  type: { type: String, default: "venues" },
+  type: { type: String },
   originalType: { type: String }, 
   eventType: { type: String },
   musicType: { type: [String] },
