@@ -12,7 +12,7 @@ const eventOptionsSchema = new mongoose.Schema({
   dessert: { type: Boolean, default: false },
   eventDate: { type: Date, required: [true, "Event date is required"] },
   planner: { type: String},
-  customName: { type: String, required: [true, "Custom name is required"] },
+  customerName: { type: String, required: [true, "Customer name is required"] },
   payment: {
     method: { type: String },
     amount: { type: Number },
