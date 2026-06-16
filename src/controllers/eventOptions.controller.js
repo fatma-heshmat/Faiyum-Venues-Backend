@@ -25,11 +25,23 @@ const createEventOptions = async (req, res) => {
 };
 
 const getEventOptions = async (req, res) => {
+ const getEventOptions = async (req, res) => {
   try {
     let query = {};
-    const { plannerName } = req.query;
+    
+    // 1️⃣ سحب بيانات اليوزر اللي جاي من التوكن (ميدلواير auth)
+    const userRole = req.user && req.user.role;
+    const userNameFromToken = req.user && req.user.name; // 👈 تأكدي إن كود اللوجن بيخزن الـ name جوه التوكن
 
-    if (plannerName) { query.planner = plannerName; }
+    if (userRole === "planner") {
+      query.planner = userNameFromToken; 
+    } else if (userRole === "admin") {
+      // لو اللي داخل أدمن، بنسيب الـ query فاضية عشان يشوف السيستم كله زي ما هو في الصورة!
+      // ولو الأدمن حابب يفلتر ببلانر معين عن طريق اللينك، السطر اللي تحت هيشغلها له:
+      if (req.query.plannerName) {
+        query.planner = req.query.plannerName;
+      }
+    }
 
     // بنجيب الداتا ونخفي الـ IDs والـ v عشان ترجع أسامي صافية للفرنت إند
     const allOptions = await EventOptions.find(query)
