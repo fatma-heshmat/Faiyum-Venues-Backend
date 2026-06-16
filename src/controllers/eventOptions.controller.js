@@ -24,7 +24,7 @@ const createEventOptions = async (req, res) => {
   }
 };
 
-const getEventOptions = async (req, res) => {
+
  const getEventOptions = async (req, res) => {
   try {
     let query = {};
