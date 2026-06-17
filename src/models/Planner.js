@@ -7,12 +7,12 @@ const plannerSchema = new mongoose.Schema({
   workingHours: { type: String, default: "Full time" }, 
   image: { type: String, required: true },
   
-  projectImages: [{ type: String }], // مصفوفة لصور التنفيذات السابقة
-  executionDate: { type: Date },     // تاريخ التنفيذ
-  executionCost: { type: Number },   // تكلفة التنفيذ
+  projectImages: [{ type: String }], 
+  executionDate: { type: Date },     
+  executionCost: { type: Number },   
   
-  rate: { type: Number , default: 0 },         // المتوسط الحسابي للتقييم
-  numberOfRatings: { type: Number, default: 0 }, // عدد الناس اللي قيموا
+  rate: { type: Number , default: 0 },         
+  numberOfRatings: { type: Number, default: 0 }, 
   reviews: [
     {
       customerName: String,
