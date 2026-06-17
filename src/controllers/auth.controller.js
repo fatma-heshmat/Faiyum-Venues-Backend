@@ -2,12 +2,10 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-// دالة تسجيل مستخدم جديد مع شروطك
 exports.register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // شروط التحقق (الإيميل والباسورد)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) return res.status(400).json({ message: "Invalid email format" });
 
@@ -25,14 +23,12 @@ exports.register = async (req, res) => {
   } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
-// دالة تسجيل الدخول مع مطابقة البيانات
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-    // مطابقة كلمة المرور المدخلة مع المشفرة في الداتابيز
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
