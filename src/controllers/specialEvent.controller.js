@@ -6,7 +6,6 @@ exports.getSpecialEvents = asyncHandler(async (req, res) => {
   res.status(200).json(events);
 });
 
-// جلب تفاصيل مناسبة واحدة بالـ ID
 exports.getSpecialEventDetails = asyncHandler(async (req, res) => {
   const event = await SpecialEvent.findById(req.params.id);
   if (!event) {
