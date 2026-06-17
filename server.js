@@ -2,20 +2,18 @@ require("dotenv").config();
 const express = require("express");
 const connectDB = require('./src/config/db'); 
 const cors = require('cors'); 
-const path = require('path'); // ناديت عليها بس، من غير npm install
+const path = require('path'); 
 const mongoose = require('mongoose');
 
 const app = express();
 connectDB();
 
 // Middleware
-app.use(cors()); // (تعديل 2) السماح للفرونت إند إنه يكلم السيرفر من غير ما المتصفح يمنعه
+app.use(cors()); 
 app.use(express.json());
 
-// السطر اللي ضفناه للصور (تأكدي إنه بعد تعريف app)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// هنا لازم تنادي على الـ Routes بتاعتك (تأكدي إنك ضفتيهم)
 app.use('/api/venues', require('./src/routes/venue.routes'));
 app.use('/api/outdoors', require('./src/routes/outdoor.routes'));
 app.use('/api/weddings', require('./src/routes/wedding.routes'));
@@ -28,7 +26,6 @@ app.use('/api', require('./src/routes/eventOptions.routes'));
 app.use('/api/chat', require('./src/routes/chat.routes'));
 app.use('/api/bookings', require('./src/routes/bookingRoutes'));
 
-// (تعديل 3) تظبيط البورت عشان Railway يقدر يغيره براحته
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT} 🚀`);
