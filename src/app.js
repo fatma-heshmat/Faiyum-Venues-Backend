@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const errorHandler = require("./middleware/errorMiddleware"); // استدعاء الميدل وير
+const errorHandler = require("./middleware/errorMiddleware"); 
 
 const authRoutes = require("./routes/auth.routes");
 const venueRoutes = require("./routes/venue.routes");
@@ -14,7 +14,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/venues", venueRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use('/api/chat', chatRoutes);
-// ده لازم يكون آخر Middleware قبل الـ module.exports
 app.use(errorHandler); 
 
 module.exports = app;
