@@ -3,7 +3,6 @@ const router = express.Router();
 const Wedding = require('../models/Wedding');
 const upload = require('../middleware/upload');
 
-// GET: عشان زميلك يسحب كل القاعات
 router.get('/', async (req, res) => {
   try {
     const venues = await Wedding.find();
@@ -13,7 +12,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET: عشان يسحب قاعة واحدة بس عن طريق الـ ID
 router.get('/:id', async (req, res) => {
   try {
     const venue = await Wedding.findById(req.params.id);
@@ -26,15 +24,12 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST: التعديل عشان يقبل form-data وصور
 router.post('/', upload.single('image'), async (req, res) => {
   try {
-    // لما بنستخدم multer، البيانات بتنزل في req.body والصورة في req.file
     const { name, description, price, location, capacity, rating } = req.body;
     
-    let finalImage = req.body.image; // لو باعتة لينكات نصية
+    let finalImage = req.body.image; 
     if (req.file) {
-      // لو رافعة ملف صورة حقيقي من الكمبيوتر
       const baseUrl = `${req.protocol}://${req.get('host')}`;
       finalImage = `${baseUrl}/uploads/${req.file.filename}`;
     }
