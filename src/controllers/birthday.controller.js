@@ -6,7 +6,6 @@ exports.getBirthdays = asyncHandler(async (req, res) => {
   res.status(200).json(birthdays);
 });
 
-// جلب تفاصيل عيد ميلاد بالـ ID
 exports.getBirthdayDetails = asyncHandler(async (req, res) => {
   const birthday = await Birthday.findById(req.params.id);
   if (!birthday) return res.status(404).json({ message: "عيد الميلاد غير موجود" });
@@ -37,8 +36,8 @@ exports.createBirthday = asyncHandler(async (req, res) => {
     rating: rating 
   });
 
-  res.status(201).json(birthday); // السطر ده لازم يكون جوه الـ exports.createBirthday
-}); // دي قفلة الـ asyncHandler والـ exports
+  res.status(201).json(birthday); 
+}); 
 
 
 
