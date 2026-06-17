@@ -6,7 +6,6 @@ exports.getGraduations = asyncHandler(async (req, res) => {
   res.status(200).json(graduations);
 });
 
-// جلب تفاصيل قاعة تخرج واحدة بالـ ID
 exports.getGraduationDetails = asyncHandler(async (req, res) => {
   const graduation = await Graduation.findById(req.params.id);
   if (!graduation) {
