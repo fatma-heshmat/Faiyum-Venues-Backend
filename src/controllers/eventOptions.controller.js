@@ -10,7 +10,6 @@ const createEventOptions = async (req, res) => {
       return res.status(400).json({ success: false, message: `Conflict: Planner (${planner}) is busy!` });
     }
 
-    // تشيك المكان (بيشتغل على أي ID مكان مهما كان نوعه لأنه String)
     if (venueId && venueId !== "...") {
       const venueConflict = await EventOptions.findOne({ eventDate, venueId });
       if (venueConflict) {
@@ -31,18 +30,15 @@ const createEventOptions = async (req, res) => {
     let query = {};
     const userRole = req.user && req.user.role;
     
-    // 1️⃣ التوكن دايماً شايل الـ id أو الـ _id بتاع اليوزر اللي عمل لوجن
     const userIdFromToken = req.user && (req.user.id || req.user._id); 
 
     if (userRole === "planner") {
-      // 2️⃣ بنروح لجدول اليوزرز نجيب الأكونت الحقيقي بالـ ID بتاعه عشان نعرف اسمه الحقيقي المتسجل
       const currentUser = await User.findById(userIdFromToken);
       
       if (!currentUser) {
         return res.status(404).json({ success: false, message: "Planner account not found!" });
       }
 
-      // 3️⃣ بناخد اسمه بالظبط ونخليه هو شرط البحث في الحجوزات
       query.planner = currentUser.name; 
 
     } else if (userRole === "admin") {
