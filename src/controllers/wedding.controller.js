@@ -1,4 +1,4 @@
-const Wedding = require("../models/Wedding"); // خلي الحرف W كبير هنا عشان يطابق الملف
+const Wedding = require("../models/Wedding"); 
 const asyncHandler = require("express-async-handler");
 
 exports.getWeddings = asyncHandler(async (req, res) => {
@@ -6,7 +6,6 @@ exports.getWeddings = asyncHandler(async (req, res) => {
   res.status(200).json(weddings);
 });
 
-// جلب تفاصيل فرح معين بالـ ID (ده اللي زميلك محتاجه)
 exports.getWeddingDetails = asyncHandler(async (req, res) => {
   const wedding = await Wedding.findById(req.params.id);
   if (!wedding) {
