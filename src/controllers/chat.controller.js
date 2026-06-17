@@ -6,13 +6,11 @@ exports.handleChat = async (req, res) => {
         const { message } = req.body;
         const apiKey = process.env.GEMINI_API_KEY;
 
-        // 1. تحديد كل الجداول المهمة (بدون اليوزرز للخصوصية)
         const collectionsToFetch = [
             'venues', 'birthdays', 'eventoptions', 'graduations', 
             'outdoors', 'planners', 'specialevents', 'weddings'
         ];
 
-        // 2. سحب الداتا من كل الجداول مرة واحدة
         const db = mongoose.connection.db;
         const allDataResults = await Promise.all(
             collectionsToFetch.map(async (colName) => {
@@ -26,14 +24,12 @@ exports.handleChat = async (req, res) => {
 
         console.log("--- DEBUG: تم تحديث البيانات الشاملة بنجاح ---");
 
-        // 3. تحديد أفضل موديل متاح
         const modelsUrl = `https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`;
         const modelsResponse = await axios.get(modelsUrl);
         const availableModels = modelsResponse.data.models;
         const bestModel = availableModels.find(m => m.name.includes("flash")) || availableModels[0];
         const modelName = bestModel.name;
 
-        // 4. الـ Mega Prompt (المخ الذكي لأورا)
         const prompt = `
 أنت "أورا"، المساعد الذكي الرسمي لموقع Aura Planner في الفيوم. أنت خبير وباحث في كل أماكن المناسبات (قاعات، كافيهات، نوادي، فيلات) ومنظمي الحفلات.
 
