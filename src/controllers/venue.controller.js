@@ -77,4 +77,6 @@ exports.updateVenue = asyncHandler(async (req, res) => {
 
 });
 
+module.exports = { createVenue, getVenues , getVenueDetails, updateVenue };
+
 
