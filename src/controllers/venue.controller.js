@@ -93,10 +93,6 @@ const deleteVenue = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  getVenues,
-  createVenue,
-  getVenueDetails,
-  updateVenue,
   deleteVenue
 };
 
