@@ -48,5 +48,33 @@ exports.getVenueDetails = async (req, res) => {
   }
 };
 
+exports.updateVenue = asyncHandler(async (req, res) => {
+
+  const venue = await Venue.findById(req.params.id);
+
+  if (!venue) {
+    res.status(404);
+    throw new Error("Venue not found");
+  }
+
+  let image = venue.image;
+
+  if (req.file) {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    image = `${baseUrl}/uploads/${req.file.filename}`;
+  }
+
+  const updatedVenue = await Venue.findByIdAndUpdate(
+    req.params.id,
+    {
+      ...req.body,
+      image
+    },
+    { new: true }
+  );
+
+  res.status(200).json(updatedVenue);
+
+});
 
 
