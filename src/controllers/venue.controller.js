@@ -1,7 +1,7 @@
 const Venue = require("../models/Venue");
 const asyncHandler = require("express-async-handler");
 
-exports.getVenues = asyncHandler(async (req, res) => {
+const getVenues = asyncHandler(async (req, res) => {
   const venues = await Venue.find({});
   
   if (venues) {
@@ -12,7 +12,7 @@ exports.getVenues = asyncHandler(async (req, res) => {
   }
 });
 
-exports.createVenue = asyncHandler(async (req, res) => {
+const createVenue = asyncHandler(async (req, res) => {
   const { name, description, price, location, capacity, rating , image} = req.body;
   let finalImage = image; 
 
@@ -33,7 +33,7 @@ exports.createVenue = asyncHandler(async (req, res) => {
   res.status(201).json(venue);
 });
 
-exports.getVenueDetails = async (req, res) => {
+const getVenueDetails = async (req, res) => {
   try {
     const venueId = req.params.id; 
     const venue = await Venue.findById(venueId);
@@ -48,7 +48,7 @@ exports.getVenueDetails = async (req, res) => {
   }
 };
 
-exports.updateVenue = asyncHandler(async (req, res) => {
+const updateVenue = asyncHandler(async (req, res) => {
 
   const venue = await Venue.findById(req.params.id);
 
@@ -93,6 +93,10 @@ const deleteVenue = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
+  getVenues,
+  createVenue,
+  getVenueDetails,
+  updateVenue,
   deleteVenue
 };
 
