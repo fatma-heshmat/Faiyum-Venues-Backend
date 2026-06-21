@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { getVenues, createVenue, getVenueDetails } = require("../controllers/venue.controller");
+const { getVenues, createVenue, getVenueDetails , updateVenue, deleteVenue} = require("../controllers/venue.controller");
 const multer = require('multer');
 
 //const upload = multer({ dest: 'uploads/' });
@@ -16,9 +16,25 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 
 router.get("/", getVenues);
-router.post("/", upload.single('image'), createVenue);
+router.post("/", auth, admin, upload.single('image'), createVenue);
 router.get("/:id", getVenueDetails);
+router.put(
+  "/:id",
+  auth,
+  admin,
+  upload.single("image"),
+  updateVenue
+);
+router.delete(
+  "/:id",
+  auth,
+  admin,
+  deleteVenue
+);
+
 
 module.exports = router;
