@@ -77,6 +77,27 @@ exports.updateVenue = asyncHandler(async (req, res) => {
 
 });
 
-module.exports = { createVenue, getVenues , getVenueDetails, updateVenue };
+const deleteVenue = asyncHandler(async (req, res) => {
+  const venue = await Venue.findById(req.params.id);
+
+  if (!venue) {
+    res.status(404);
+    throw new Error("Venue not found");
+  }
+
+  await Venue.findByIdAndDelete(req.params.id);
+
+  res.status(200).json({
+    message: "Venue deleted successfully"
+  });
+});
+
+module.exports = {
+  getVenues,
+  createVenue,
+  getVenueDetails,
+  updateVenue,
+  deleteVenue
+};
 
 
