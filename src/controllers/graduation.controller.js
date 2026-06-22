@@ -15,7 +15,7 @@ const getGraduationDetails = asyncHandler(async (req, res) => {
 });
 
 const createGraduation = asyncHandler(async (req, res) => {
-  const { name, description, price, location, image , capacity, rating } = req.body;
+  const { name, description, price, location, image } = req.body;
   
   let finalImage = image;
   if (req.file) {
