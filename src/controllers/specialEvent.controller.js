@@ -15,7 +15,7 @@ const getSpecialEventDetails = asyncHandler(async (req, res) => {
 });
 
 const createSpecialEvent = asyncHandler(async (req, res) => {
-  const { name, description, price, location, image , capacity, rating } = req.body;
+  const { name, description, price, location, image } = req.body;
   
   let finalImage = image;
   if (req.file) {
