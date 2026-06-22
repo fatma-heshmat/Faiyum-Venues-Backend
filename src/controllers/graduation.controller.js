@@ -1,12 +1,12 @@
 const Graduation = require("../models/Graduation");
 const asyncHandler = require("express-async-handler");
 
-exports.getGraduations = asyncHandler(async (req, res) => {
+const getGraduations = asyncHandler(async (req, res) => {
   const graduations = await Graduation.find({});
   res.status(200).json(graduations);
 });
 
-exports.getGraduationDetails = asyncHandler(async (req, res) => {
+const getGraduationDetails = asyncHandler(async (req, res) => {
   const graduation = await Graduation.findById(req.params.id);
   if (!graduation) {
     return res.status(404).json({ message: "قاعة التخرج غير موجودة" });
@@ -14,7 +14,7 @@ exports.getGraduationDetails = asyncHandler(async (req, res) => {
   res.status(200).json(graduation);
 });
 
-exports.createGraduation = asyncHandler(async (req, res) => {
+const createGraduation = asyncHandler(async (req, res) => {
   const { name, description, price, location, image , capacity, rating } = req.body;
   
   let finalImage = image;
@@ -40,3 +40,28 @@ exports.createGraduation = asyncHandler(async (req, res) => {
   res.status(201).json(graduation);
 
 });
+
+const updateGraduation = asyncHandler(async (req, res) => {
+  const graduation = await Graduation.findById(req.params.id);
+  if (!graduation) { res.status(404); throw new Error("Graduation venue not found"); }
+  let image = graduation.image;
+  if (req.file) {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    image = `${baseUrl}/uploads/${req.file.filename}`;
+  }
+  const updatedGraduation = await Graduation.findByIdAndUpdate(
+    req.params.id,
+    { ...req.body, image },
+    { returnDocument: 'after' }
+  );
+  res.status(200).json(updatedGraduation);
+});
+
+const deleteGraduation = asyncHandler(async (req, res) => {
+  const graduation = await Graduation.findById(req.params.id);
+  if (!graduation) { res.status(404); throw new Error("Graduation venue not found"); }
+  await Graduation.findByIdAndDelete(req.params.id);
+  res.status(200).json({ message: "Graduation venue deleted successfully" });
+});
+
+module.exports = { getGraduations, getGraduationDetails, createGraduation, updateGraduation, deleteGraduation };
