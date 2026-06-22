@@ -16,7 +16,7 @@ const getWeddingDetails = asyncHandler(async (req, res) => {
 });
 
 const createWedding = asyncHandler(async (req, res) => {
-  const { name, description, price, location, image, capacity, rating } = req.body;
+  const { name, description, price, location, image } = req.body;
   let finalImage = image;
   if (req.file) {
     const baseUrl = `${req.protocol}://${req.get('host')}`;
