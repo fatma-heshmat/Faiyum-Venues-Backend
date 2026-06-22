@@ -15,7 +15,7 @@ const getGraduationDetails = asyncHandler(async (req, res) => {
 });
 
 const createGraduation = asyncHandler(async (req, res) => {
-  const { name, description, price, location, image } = req.body;
+  const { name, description, price, location, image , capacity , rating} = req.body;
   
   let finalImage = image;
   if (req.file) {
@@ -23,7 +23,7 @@ const createGraduation = asyncHandler(async (req, res) => {
     finalImage = `${baseUrl}/uploads/${req.file.filename}`;
   }
   
-  if (!name || !price || !description || !location || !finalImage || !capacity || !rating) {
+  if (!name || !price || !description || !location || !finalImage) {
     res.status(400);
     throw new Error("Please Enter All Fields");
   }
