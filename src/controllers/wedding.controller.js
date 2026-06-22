@@ -1,12 +1,12 @@
 const Wedding = require("../models/Wedding"); 
 const asyncHandler = require("express-async-handler");
 
-exports.getWeddings = asyncHandler(async (req, res) => {
+const getWeddings = asyncHandler(async (req, res) => {
   const weddings = await Wedding.find({});
   res.status(200).json(weddings);
 });
 
-exports.getWeddingDetails = asyncHandler(async (req, res) => {
+const getWeddingDetails = asyncHandler(async (req, res) => {
   const wedding = await Wedding.findById(req.params.id);
   if (!wedding) {
     res.status(404);
@@ -15,7 +15,7 @@ exports.getWeddingDetails = asyncHandler(async (req, res) => {
   res.status(200).json(wedding);
 });
 
-exports.createWedding = asyncHandler(async (req, res) => {
+const createWedding = asyncHandler(async (req, res) => {
   const { name, description, price, location, image, capacity, rating } = req.body;
   let finalImage = image;
   if (req.file) {
@@ -33,3 +33,39 @@ exports.createWedding = asyncHandler(async (req, res) => {
 
 });
 
+const updateWedding = asyncHandler(async (req, res) => {
+  const wedding = await Wedding.findById(req.params.id);
+  if (!wedding) {
+    res.status(404);
+    throw new Error("Wedding venue not found");
+  }
+  let image = wedding.image;
+  if (req.file) {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    image = `${baseUrl}/uploads/${req.file.filename}`;
+  }
+  const updatedWedding = await Wedding.findByIdAndUpdate(
+    req.params.id,
+    { ...req.body, image },
+    { returnDocument: 'after' }
+  );
+  res.status(200).json(updatedWedding);
+});
+
+const deleteWedding = asyncHandler(async (req, res) => {
+  const wedding = await Wedding.findById(req.params.id);
+  if (!wedding) {
+    res.status(404);
+    throw new Error("Wedding venue not found");
+  }
+  await Wedding.findByIdAndDelete(req.params.id);
+  res.status(200).json({ message: "Wedding venue deleted successfully" });
+});
+
+module.exports = {
+  getWeddings,
+  getWeddingDetails,
+  createWedding,
+  updateWedding,
+  deleteWedding
+};
