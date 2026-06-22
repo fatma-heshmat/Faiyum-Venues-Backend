@@ -69,9 +69,8 @@ const updateVenue = asyncHandler(async (req, res) => {
     {
       ...req.body,
       image
-    },
-    { new: true }
-  );
+     },
+  { returnDocument: 'after' }  );
 
   res.status(200).json(updatedVenue);
 
